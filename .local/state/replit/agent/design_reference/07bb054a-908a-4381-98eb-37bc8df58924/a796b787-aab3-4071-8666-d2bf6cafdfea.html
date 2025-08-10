@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Augmented Prototyping Experiment Toolkit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    'sans': ['Inter', 'system-ui', 'sans-serif'],
+                },
+                colors: {
+                    'navy': '#1e3a8a',
+                    'form-border': '#d1d5db',
+                }
+            }
+        }
+    };
+    </script>
+</head>
+<body class="bg-white font-sans">
+    <!-- @COMPONENT: Header -->
+    <header class="bg-navy text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <h1 class="text-xl font-semibold">AI-Augmented Prototyping Experiment Toolkit</h1>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <div class="max-w-6xl mx-auto px-6 py-8">
+        <!-- @COMPONENT: TabNavigation -->
+        <!-- Desktop Tab Navigation -->
+        <nav class="hidden md:flex border-b border-form-border mb-8">
+            <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-navy text-navy" data-tab="checklist">
+                Master Experiment Checklist
+            </button>
+            <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-navy" data-tab="brief">
+                Blank Experiment Brief
+            </button>
+            <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-navy" data-tab="summary">
+                Post-Experiment Summary
+            </button>
+            <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-navy" data-tab="gono">
+                Go/No-Go Checklist
+            </button>
+        </nav>
+
+        <!-- Mobile Tab Navigation -->
+        <div class="md:hidden mb-8">
+            <select id="mobile-tab-select" class="w-full p-3 border border-form-border rounded-lg bg-white">
+                <option value="checklist">Master Experiment Checklist</option>
+                <option value="brief">Blank Experiment Brief</option>
+                <option value="summary">Post-Experiment Summary</option>
+                <option value="gono">Go/No-Go Checklist</option>
+            </select>
+        </div>
+        <!-- @END_COMPONENT: TabNavigation -->
+
+        <!-- @COMPONENT: TabContent -->
+        <!-- Tab 1: Master Experiment Checklist -->
+        <div id="checklist-tab" class="tab-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-gray-900">Master Experiment Checklist</h2>
+                <div class="flex gap-3">
+                    <button onclick="saveData('checklist')" class="px-4 py-2 bg-navy text-white rounded-lg hover:bg-blue-800 text-sm">Save</button>
+                    <button onclick="clearData('checklist')" class="px-4 py-2 border border-form-border text-gray-700 rounded-lg hover:bg-gray-50 text-sm">Clear</button>
+                    <button onclick="exportToPDF('checklist')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">Export PDF</button>
+                </div>
+            </div>
+
+            <form id="checklist-form" class="space-y-8">
+                <!-- Planning & Hypothesis Section -->
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="font-medium text-gray-900 mb-4">Planning & Hypothesis</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="planning_1">
+                            <span class="text-sm text-gray-700">Problem statement clearly defined and documented</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="planning_2">
+                            <span class="text-sm text-gray-700">Hypothesis is specific, measurable, and testable</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="planning_3">
+                            <span class="text-sm text-gray-700">Success metrics and guardrails identified</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="planning_4">
+                            <span class="text-sm text-gray-700">Minimum detectable effect (MDE) calculated</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="planning_5">
+                            <span class="text-sm text-gray-700">Sample size requirements determined</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="planning_6">
+                            <span class="text-sm text-gray-700">Experiment duration and timeline planned</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Design & Setup Section -->
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="font-medium text-gray-900 mb-4">Design & Setup</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="design_1">
+                            <span class="text-sm text-gray-700">Randomization strategy implemented correctly</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="design_2">
+                            <span class="text-sm text-gray-700">Control and treatment variants defined</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="design_3">
+                            <span class="text-sm text-gray-700">Tracking and measurement infrastructure ready</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="design_4">
+                            <span class="text-sm text-gray-700">Quality assurance testing completed</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="design_5">
+                            <span class="text-sm text-gray-700">Stakeholder alignment and approvals obtained</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Execution Section -->
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="font-medium text-gray-900 mb-4">Execution</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="execution_1">
+                            <span class="text-sm text-gray-700">Experiment launched successfully without issues</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="execution_2">
+                            <span class="text-sm text-gray-700">Daily monitoring for anomalies and issues</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="execution_3">
+                            <span class="text-sm text-gray-700">Traffic allocation working as expected</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="execution_4">
+                            <span class="text-sm text-gray-700">Data collection functioning properly</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="execution_5">
+                            <span class="text-sm text-gray-700">Regular progress updates communicated to stakeholders</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Analysis & Decision Section -->
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="font-medium text-gray-900 mb-4">Analysis & Decision</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="analysis_1">
+                            <span class="text-sm text-gray-700">Statistical significance reached for primary metric</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="analysis_2">
+                            <span class="text-sm text-gray-700">Guardrail metrics checked and within acceptable limits</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="analysis_3">
+                            <span class="text-sm text-gray-700">Segment analysis completed for key user groups</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="analysis_4">
+                            <span class="text-sm text-gray-700">Results validated and peer reviewed</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="analysis_5">
+                            <span class="text-sm text-gray-700">Clear go/no-go decision made based on results</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Post-Experiment Section -->
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="font-medium text-gray-900 mb-4">Post-Experiment</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="post_1">
+                            <span class="text-sm text-gray-700">Results documented and shared with stakeholders</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="post_2">
+                            <span class="text-sm text-gray-700">Key learnings and insights captured</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="post_3">
+                            <span class="text-sm text-gray-700">Follow-up actions and next steps defined</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="post_4">
+                            <span class="text-sm text-gray-700">Experiment data archived and accessible for future reference</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tab 2: Blank Experiment Brief -->
+        <div id="brief-tab" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-gray-900">Blank Experiment Brief</h2>
+                <div class="flex gap-3">
+                    <button onclick="saveData('brief')" class="px-4 py-2 bg-navy text-white rounded-lg hover:bg-blue-800 text-sm">Save</button>
+                    <button onclick="clearData('brief')" class="px-4 py-2 border border-form-border text-gray-700 rounded-lg hover:bg-gray-50 text-sm">Clear</button>
+                    <button onclick="exportToPDF('brief')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">Export PDF</button>
+                </div>
+            </div>
+
+            <form id="brief-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Experiment Title</label>
+                        <input type="text" name="title" class="w-full p-3 border border-form-border rounded-lg" placeholder="Enter experiment title">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Owner</label>
+                        <input type="text" name="owner" class="w-full p-3 border border-form-border rounded-lg" placeholder="Enter owner name">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <input type="date" name="date" class="w-full p-3 border border-form-border rounded-lg md:w-auto">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Problem Statement</label>
+                    <textarea name="problem" rows="4" class="w-full p-3 border border-form-border rounded-lg" placeholder="Describe the problem this experiment aims to solve..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hypothesis</label>
+                    <textarea name="hypothesis" rows="3" class="w-full p-3 border border-form-border rounded-lg" placeholder="If we [change], then [outcome] because [reasoning]..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Primary Metric</label>
+                        <input type="text" name="primary_metric" class="w-full p-3 border border-form-border rounded-lg" placeholder="e.g., Conversion rate, CTR">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Guardrails</label>
+                        <input type="text" name="guardrails" class="w-full p-3 border border-form-border rounded-lg" placeholder="e.g., Page load time, Error rate">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Experiment Type</label>
+                        <select name="experiment_type" class="w-full p-3 border border-form-border rounded-lg bg-white">
+                            <option value="">Select type</option>
+                            <option value="ab">A/B Test</option>
+                            <option value="multivariate">Multivariate</option>
+                            <option value="holdout">Holdout</option>
+                            <option value="sequential">Sequential</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Randomisation Unit</label>
+                        <select name="randomisation_unit" class="w-full p-3 border border-form-border rounded-lg bg-white">
+                            <option value="">Select unit</option>
+                            <option value="user">User</option>
+                            <option value="session">Session</option>
+                            <option value="page_view">Page View</option>
+                            <option value="device">Device</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Traffic Plan</label>
+                    <textarea name="traffic_plan" rows="3" class="w-full p-3 border border-form-border rounded-lg" placeholder="Describe traffic allocation and ramp-up plan..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Baseline & MDE</label>
+                        <input type="text" name="baseline_mde" class="w-full p-3 border border-form-border rounded-lg" placeholder="e.g., Baseline: 5%, MDE: 10%">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sample Size</label>
+                        <input type="text" name="sample_size" class="w-full p-3 border border-form-border rounded-lg" placeholder="e.g., 50,000 users per variant">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Variants</label>
+                    <textarea name="variants" rows="4" class="w-full p-3 border border-form-border rounded-lg" placeholder="Describe control and treatment variants..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Risks & Mitigations</label>
+                    <textarea name="risks" rows="3" class="w-full p-3 border border-form-border rounded-lg" placeholder="Identify potential risks and mitigation strategies..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Decision Rule</label>
+                    <textarea name="decision_rule" rows="3" class="w-full p-3 border border-form-border rounded-lg" placeholder="Define criteria for success/failure and launch decision..."></textarea>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tab 3: Post-Experiment Summary -->
+        <div id="summary-tab" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-gray-900">Post-Experiment Summary</h2>
+                <div class="flex gap-3">
+                    <button onclick="saveData('summary')" class="px-4 py-2 bg-navy text-white rounded-lg hover:bg-blue-800 text-sm">Save</button>
+                    <button onclick="clearData('summary')" class="px-4 py-2 border border-form-border text-gray-700 rounded-lg hover:bg-gray-50 text-sm">Clear</button>
+                    <button onclick="exportToPDF('summary')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">Export PDF</button>
+                </div>
+            </div>
+
+            <form id="summary-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Experiment Title</label>
+                        <input type="text" name="title" class="w-full p-3 border border-form-border rounded-lg" placeholder="Enter experiment title">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Owner</label>
+                        <input type="text" name="owner" class="w-full p-3 border border-form-border rounded-lg" placeholder="Enter owner name">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <input type="date" name="date" class="w-full p-3 border border-form-border rounded-lg md:w-auto">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Result Summary</label>
+                    <textarea name="result_summary" rows="4" class="w-full p-3 border border-form-border rounded-lg" placeholder="Summarize the key results and findings..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Key Learnings</label>
+                    <textarea name="key_learnings" rows="4" class="w-full p-3 border border-form-border rounded-lg" placeholder="What were the main insights and learnings?"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Decision</label>
+                    <select name="decision" class="w-full p-3 border border-form-border rounded-lg bg-white md:w-auto">
+                        <option value="">Select decision</option>
+                        <option value="launch">Launch</option>
+                        <option value="no_launch">No Launch</option>
+                        <option value="iterate">Iterate</option>
+                        <option value="additional_testing">Additional Testing Required</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Next Steps</label>
+                    <textarea name="next_steps" rows="4" class="w-full p-3 border border-form-border rounded-lg" placeholder="What are the recommended next steps?"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Notes for Future</label>
+                    <textarea name="notes" rows="3" class="w-full p-3 border border-form-border rounded-lg" placeholder="Any additional notes or considerations for future experiments..."></textarea>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tab 4: Go/No-Go Checklist -->
+        <div id="gono-tab" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-gray-900">Go/No-Go Checklist</h2>
+                <div class="flex gap-3">
+                    <button onclick="saveData('gono')" class="px-4 py-2 bg-navy text-white rounded-lg hover:bg-blue-800 text-sm">Save</button>
+                    <button onclick="clearData('gono')" class="px-4 py-2 border border-form-border text-gray-700 rounded-lg hover:bg-gray-50 text-sm">Clear</button>
+                    <button onclick="exportToPDF('gono')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">Export PDF</button>
+                </div>
+            </div>
+
+            <form id="gono-form" class="space-y-6">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="font-medium text-gray-900 mb-4">Launch Readiness Checklist</h3>
+                    <div class="space-y-4">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_1">
+                            <span class="text-sm text-gray-700">Results show statistically significant improvement in primary metric</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_2">
+                            <span class="text-sm text-gray-700">All guardrail metrics are within acceptable thresholds</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_3">
+                            <span class="text-sm text-gray-700">No significant negative impact on user experience metrics</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_4">
+                            <span class="text-sm text-gray-700">Technical implementation is stable and scalable</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_5">
+                            <span class="text-sm text-gray-700">Results are consistent across key user segments</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_6">
+                            <span class="text-sm text-gray-700">Business impact justifies implementation costs</span>
+                        </label>
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" class="mt-1 rounded border-form-border" name="gono_7">
+                            <span class="text-sm text-gray-700">Stakeholder approval obtained for full launch</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">Decision Summary</h4>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3">
+                            <input type="radio" name="final_decision" value="go" class="text-blue-600 border-form-border">
+                            <span class="text-sm font-medium text-blue-900">GO - Launch the experiment results</span>
+                        </label>
+                        <label class="flex items-center gap-3">
+                            <input type="radio" name="final_decision" value="no_go" class="text-blue-600 border-form-border">
+                            <span class="text-sm font-medium text-blue-900">NO-GO - Do not launch</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- @END_COMPONENT: TabContent -->
+    </div>
+
+    <script>
+    (function() {
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const mobileSelect = document.getElementById('mobile-tab-select');
+        
+        function showTab(tabId) {
+            // Hide all tabs
+            tabContents.forEach(content => content.classList.add('hidden'));
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabId + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+            }
+            
+            // Update desktop tab buttons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('border-navy', 'text-navy');
+                btn.classList.add('border-transparent', 'text-gray-600');
+            });
+            
+            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeButton) {
+                activeButton.classList.add('border-navy', 'text-navy');
+                activeButton.classList.remove('border-transparent', 'text-gray-600');
+            }
+            
+            // Update mobile select
+            mobileSelect.value = tabId;
+        }
+        
+        // Desktop tab click handlers
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                showTab(tabId);
+            });
+        });
+        
+        // Mobile select handler
+        mobileSelect.addEventListener('change', (e) => {
+            showTab(e.target.value);
+        });
+
+        // Local storage functions
+        window.saveData = function(tabId) {
+            const form = document.getElementById(tabId + '-form');
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Handle regular form fields
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            // Handle checkboxes separately (they won't appear in FormData if unchecked)
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                data[checkbox.name] = checkbox.checked;
+            });
+            
+            // Handle radio buttons
+            const radioButtons = form.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                if (radio.checked) {
+                    data[radio.name] = radio.value;
+                }
+            });
+            
+            localStorage.setItem('experiment_toolkit_' + tabId, JSON.stringify(data));
+            
+            // Show save confirmation
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Saved!';
+            button.classList.remove('bg-navy', 'hover:bg-blue-800');
+            button.classList.add('bg-green-600', 'hover:bg-green-700');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('bg-green-600', 'hover:bg-green-700');
+                button.classList.add('bg-navy', 'hover:bg-blue-800');
+            }, 2000);
+        };
+
+        window.clearData = function(tabId) {
+            if (confirm('Are you sure you want to clear all data for this tab?')) {
+                const form = document.getElementById(tabId + '-form');
+                form.reset();
+                localStorage.removeItem('experiment_toolkit_' + tabId);
+                
+                // Show clear confirmation
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Cleared!';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1500);
+            }
+        };
+
+        function loadData(tabId) {
+            const savedData = localStorage.getItem('experiment_toolkit_' + tabId);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const form = document.getElementById(tabId + '-form');
+                
+                for (let [key, value] of Object.entries(data)) {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field) {
+                        if (field.type === 'checkbox') {
+                            field.checked = value;
+                        } else if (field.type === 'radio') {
+                            if (field.value === value) {
+                                field.checked = true;
+                            }
+                        } else {
+                            field.value = value;
+                        }
+                    }
+                }
+            }
+        }
+
+        // PDF export functionality
+        window.exportToPDF = function(tabId) {
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Generating...';
+            button.disabled = true;
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Get form data
+            const form = document.getElementById(tabId + '-form');
+            const formData = new FormData(form);
+            
+            // Set up PDF
+            doc.setFontSize(20);
+            doc.text(getTabTitle(tabId), 20, 20);
+            
+            let yPosition = 40;
+            const lineHeight = 10;
+            const maxWidth = 170;
+            
+            if (tabId === 'checklist' || tabId === 'gono') {
+                // Handle checklist items
+                const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+                const sections = form.querySelectorAll('.bg-gray-50, .bg-blue-50');
+                
+                sections.forEach(section => {
+                    const heading = section.querySelector('h3, h4');
+                    if (heading) {
+                        doc.setFontSize(14);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(heading.textContent, 20, yPosition);
+                        yPosition += lineHeight + 5;
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(10);
+                        
+                        const sectionCheckboxes = section.querySelectorAll('input[type="checkbox"]');
+                        sectionCheckboxes.forEach(checkbox => {
+                            const label = checkbox.parentElement.querySelector('span');
+                            const isChecked = checkbox.checked ? '☑' : '☐';
+                            const text = `${isChecked} ${label.textContent}`;
+                            
+                            const lines = doc.splitTextToSize(text, maxWidth);
+                            lines.forEach(line => {
+                                if (yPosition > 280) {
+                                    doc.addPage();
+                                    yPosition = 20;
+                                }
+                                doc.text(line, 20, yPosition);
+                                yPosition += lineHeight;
+                            });
+                            yPosition += 2;
+                        });
+                        yPosition += 5;
+                    }
+                });
+                
+                // Handle radio buttons for go/no-go
+                const radioButtons = form.querySelectorAll('input[type="radio"]');
+                radioButtons.forEach(radio => {
+                    if (radio.checked) {
+                        const label = radio.parentElement.querySelector('span');
+                        doc.setFontSize(12);
+                        doc.setFont(undefined, 'bold');
+                        doc.text('Final Decision: ' + label.textContent, 20, yPosition);
+                        yPosition += lineHeight;
+                    }
+                });
+            } else {
+                // Handle form fields
+                for (let [key, value] of formData.entries()) {
+                    if (value.trim()) {
+                        const field = form.querySelector(`[name="${key}"]`);
+                        const label = form.querySelector(`label[for="${key}"], label:has([name="${key}"])`);
+                        const labelText = label ? label.textContent.replace('*', '').trim() : key;
+                        
+                        doc.setFontSize(11);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(labelText + ':', 20, yPosition);
+                        yPosition += lineHeight;
+                        
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(10);
+                        const lines = doc.splitTextToSize(value, maxWidth);
+                        lines.forEach(line => {
+                            if (yPosition > 280) {
+                                doc.addPage();
+                                yPosition = 20;
+                            }
+                            doc.text(line, 20, yPosition);
+                            yPosition += lineHeight;
+                        });
+                        yPosition += 5;
+                    }
+                }
+            }
+            
+            // Add timestamp
+            const now = new Date();
+            doc.setFontSize(8);
+            doc.setFont(undefined, 'italic');
+            doc.text(`Generated on ${now.toLocaleString()}`, 20, doc.internal.pageSize.height - 10);
+            
+            // Save PDF
+            doc.save(`${getTabTitle(tabId).replace(/\s+/g, '_').toLowerCase()}.pdf`);
+            
+            // Reset button
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            }, 1000);
+        };
+
+        function getTabTitle(tabId) {
+            const titles = {
+                'checklist': 'Master Experiment Checklist',
+                'brief': 'Blank Experiment Brief',
+                'summary': 'Post-Experiment Summary',
+                'gono': 'Go/No-Go Checklist'
+            };
+            return titles[tabId] || tabId;
+        }
+
+        // Load saved data on page load
+        ['checklist', 'brief', 'summary', 'gono'].forEach(tabId => {
+            loadData(tabId);
+        });
+
+        // Initialize first tab
+        showTab('checklist');
+    })();
+    </script>
+</body>
+</html>
