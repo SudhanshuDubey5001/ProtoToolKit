@@ -16,6 +16,7 @@ export default defineConfig({
         ]
       : []),
   ],
+  base: 'https://proto-tool-kit.vercel.app/',
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
