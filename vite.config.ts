@@ -17,13 +17,13 @@ export default defineConfig({
       : []),
   ],
   base: 'https://proto-tool-kit.vercel.app/',
-  // resolve: {
-  //   alias: {
-  //     "@": path.resolve(import.meta.dirname, "client", "src"),
-  //     "@shared": path.resolve(import.meta.dirname, "shared"),
-  //     "@assets": path.resolve(import.meta.dirname, "attached_assets"),
-  //   },
-  // },
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client", "src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    },
+  },
   root: path.resolve(import.meta.dirname, "client"),
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
